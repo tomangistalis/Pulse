@@ -15,11 +15,25 @@ struct PinButton: View {
     var isTextNeeded: Bool = true
 
     var body: some View {
-        Button(action: viewModel.togglePin) {
-            if isTextNeeded {
-                Label(viewModel.isPinned ? "Unpin" : "Pin", systemImage: viewModel.isPinned ? "pin.fill" : "pin")
-            } else {
-                Image(systemName: viewModel.isPinned ? "pin.fill" : "pin")
+        if #available(iOS 15.0, *) {
+            Menu {
+
+            } label: {
+                if isTextNeeded {
+                    Label(viewModel.isPinned ? "Unpin" : "Pin", systemImage: viewModel.isPinned ? "pin.fill" : "pin")
+                } else {
+                    Image(systemName: viewModel.isPinned ? "pin.fill" : "pin")
+                }
+            } primaryAction: {
+                viewModel.togglePin()
+            }
+        } else {
+            Button(action: viewModel.togglePin) {
+                if isTextNeeded {
+                    Label(viewModel.isPinned ? "Unpin" : "Pin", systemImage: viewModel.isPinned ? "pin.fill" : "pin")
+                } else {
+                    Image(systemName: viewModel.isPinned ? "pin.fill" : "pin")
+                }
             }
         }
     }

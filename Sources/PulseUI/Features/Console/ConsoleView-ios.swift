@@ -34,8 +34,18 @@ public struct ConsoleView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     if !isCloseButtonHidden && presentationMode.wrappedValue.isPresented {
-                        Button("Close") {
-                            presentationMode.wrappedValue.dismiss()
+                        if #available(iOS 15.0, *) {
+                            Menu {
+
+                            } label: {
+                                Text("Close")
+                            } primaryAction: {
+                                presentationMode.wrappedValue.dismiss()
+                            }
+                        } else {
+                            Button("Close") {
+                                presentationMode.wrappedValue.dismiss()
+                            }
                         }
                     }
                 }
@@ -55,11 +65,29 @@ public struct ConsoleView: View {
 
     @available(iOS 15, *)
     @ViewBuilder private var trailingNavigationBarItems: some View {
-        Button(action: { environment.router.isShowingShareStore = true }) {
-            Label("Share", systemImage: "square.and.arrow.up")
-        }
-        Button(action: { environment.router.isShowingFilters = true }) {
-            Image(systemName: "line.horizontal.3.decrease.circle")
+        if #available(iOS 15.0, *) {
+            Menu {
+
+            } label: {
+                Label("Share", systemImage: "square.and.arrow.up")
+            } primaryAction: {
+                environment.router.isShowingShareStore = true
+            }
+
+            Menu {
+
+            } label: {
+                Image(systemName: "line.horizontal.3.decrease.circle")
+            } primaryAction: {
+                environment.router.isShowingFilters = true
+            }
+        } else {
+            Button(action: { environment.router.isShowingShareStore = true }) {
+                Label("Share", systemImage: "square.and.arrow.up")
+            }
+            Button(action: { environment.router.isShowingFilters = true }) {
+                Image(systemName: "line.horizontal.3.decrease.circle")
+            }
         }
         ConsoleContextMenu()
     }

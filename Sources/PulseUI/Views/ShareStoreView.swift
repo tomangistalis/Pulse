@@ -50,7 +50,17 @@ struct ShareStoreView: View {
             }
 #else
             ToolbarItem(placement: .navigationBarLeading) {
-                Button("Cancel", action: onDismiss)
+                if #available(iOS 15.0, *) {
+                    Menu {
+
+                    } label: {
+                        Text("Cancel")
+                    } primaryAction: {
+                        onDismiss()
+                    }
+                } else {
+                    Button("Cancel", action: onDismiss)
+                }
             }
 #endif
         }

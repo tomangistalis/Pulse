@@ -21,8 +21,12 @@ struct ConsoleListPinsSectionView: View {
                 .inlineNavigationTitle("Pins")
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: viewModel.buttonRemovePinsTapped) {
+                        Menu {
+
+                        } label: {
                             Image(systemName: "trash")
+                        } primaryAction: {
+                            viewModel.buttonRemovePinsTapped()
                         }
                     }
                 }

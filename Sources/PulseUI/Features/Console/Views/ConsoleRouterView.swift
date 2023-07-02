@@ -54,9 +54,23 @@ extension ConsoleRouterView {
         NavigationView {
             ConsoleFiltersView()
                 .inlineNavigationTitle("Filters")
-                .navigationBarItems(trailing: Button("Done") {
-                    router.isShowingFilters = false
-                })
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        if #available(iOS 15.0, *) {
+                            Menu {
+
+                            } label: {
+                                Text("Done")
+                            } primaryAction: {
+                                router.isShowingFilters = false
+                            }
+                        } else {
+                            Button(action: { router.isShowingFilters = false }) {
+                                Text("Done")
+                            }
+                        }
+                    }
+                }
                 .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
         }
     }
@@ -69,8 +83,18 @@ extension ConsoleRouterView {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItemGroup(placement: .navigationBarLeading) {
-                        Button(action: { router.isShowingSessions = false }) {
-                            Text("Close")
+                        if #available(iOS 15.0, *) {
+                            Menu {
+
+                            } label: {
+                                Text("Close")
+                            } primaryAction: {
+                                router.isShowingSessions = false
+                            }
+                        } else {
+                            Button(action: { router.isShowingSessions = false }) {
+                                Text("Close")
+                            }
                         }
                     }
                 }
@@ -82,18 +106,46 @@ extension ConsoleRouterView {
             SettingsView(store: environment.store)
                 .navigationTitle("Settings")
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationBarItems(trailing: Button(action: { router.isShowingSettings = false }) {
-                    Text("Done")
-                })
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        if #available(iOS 15.0, *) {
+                            Menu {
+
+                            } label: {
+                                Text("Done")
+                            } primaryAction: {
+                                router.isShowingSettings = false
+                            }
+                        } else {
+                            Button(action: { router.isShowingSettings = false }) {
+                                Text("Done")
+                            }
+                        }
+                    }
+                }
         }
     }
 
     private var destinationStoreInfo: some View {
         NavigationView {
             StoreDetailsView(source: .store(environment.store))
-                .navigationBarItems(trailing: Button(action: { router.isShowingStoreInfo = false }) {
-                    Text("Done")
-                })
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        if #available(iOS 15.0, *) {
+                            Menu {
+
+                            } label: {
+                                Text("Done")
+                            } primaryAction: {
+                                router.isShowingStoreInfo = false
+                            }
+                        } else {
+                            Button(action: { router.isShowingStoreInfo = false }) {
+                                Text("Done")
+                            }
+                        }
+                    }
+                }
         }
     }
 

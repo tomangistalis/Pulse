@@ -38,9 +38,21 @@ struct SessionsView: View {
 #if os(iOS)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(editMode.isEditing ? "Done" : "Edit") {
-                        withAnimation {
-                            editMode = editMode.isEditing ? .inactive : .active
+                    if #available(iOS 15.0, *) {
+                        Menu {
+
+                        } label: {
+                            Text(editMode.isEditing ? "Done" : "Edit")
+                        } primaryAction: {
+                            withAnimation {
+                                editMode = editMode.isEditing ? .inactive : .active
+                            }
+                        }
+                    } else {
+                        Button(editMode.isEditing ? "Done" : "Edit") {
+                            withAnimation {
+                                editMode = editMode.isEditing ? .inactive : .active
+                            }
                         }
                     }
                 }

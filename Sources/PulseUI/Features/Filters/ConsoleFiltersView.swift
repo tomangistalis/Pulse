@@ -17,7 +17,11 @@ struct ConsoleFiltersView: View {
             form
         }
 #if os(iOS)
-        .navigationBarItems(leading: buttonReset)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                buttonReset
+            }
+        }
 #endif
 #else
         VStack(spacing: 0) {
@@ -68,9 +72,21 @@ struct ConsoleFiltersView: View {
 #endif
     }
 
+    @ViewBuilder
     private var buttonReset: some View {
-        Button(role: .destructive, action: viewModel.resetAll) { Text("Reset") }
+        if #available(iOS 15.0, *) {
+            Menu {
+
+            } label: {
+                Text("Reset")
+            } primaryAction: {
+                viewModel.resetAll()
+            }
             .disabled(viewModel.isDefaultFilters(for: environment.mode))
+        } else {
+            Button.destructive(action: viewModel.resetAll) { Text("Reset") }
+                .disabled(viewModel.isDefaultFilters(for: environment.mode))
+        }
     }
 }
 

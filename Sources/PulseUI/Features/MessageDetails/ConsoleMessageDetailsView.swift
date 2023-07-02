@@ -11,6 +11,8 @@ import Pulse
 struct ConsoleMessageDetailsView: View {
     let message: LoggerMessageEntity
 
+    @State private var showingMetadata: Bool?
+
 #if os(iOS)
     var body: some View {
         contents
@@ -24,8 +26,22 @@ struct ConsoleMessageDetailsView: View {
 
     @ViewBuilder
     private var trailingNavigationBarItems: some View {
-        NavigationLink(destination: ConsoleMessageMetadataView(message: message)) {
-            Image(systemName: "info.circle")
+        if #available(iOS 15.0, *) {
+            Menu(content: {
+
+            }, label: {
+                Image(systemName: "info.circle")
+            }, primaryAction: {
+                withAnimation {
+                    showingMetadata = true
+                }
+            })
+            .background(NavigationLink($showingMetadata, destination: { _ in ConsoleMessageMetadataView(message: message) }))
+        } else {
+            Button(action: { showingMetadata = true }) {
+                Image(systemName: "info.circle")
+            }
+            .background(NavigationLink($showingMetadata, destination: { _ in ConsoleMessageMetadataView(message: message) }))
         }
         PinButton(viewModel: .init(message), isTextNeeded: false)
     }
@@ -95,6 +111,24 @@ struct ConsoleMessageDetailsView: View {
         let viewModel = RichTextViewModel(string: TextRenderer().preformatted(message.text))
         viewModel.isFilterEnabled = true
         return viewModel
+    }
+}
+
+extension NavigationLink where Label == EmptyView {
+    init?<Value>(
+        _ binding: Binding<Value?>,
+        @ViewBuilder destination: (Value) -> Destination
+    ) {
+        guard let value = binding.wrappedValue else {
+            return nil
+        }
+
+        let isActive = Binding(
+            get: { true },
+            set: { newValue in if !newValue { binding.wrappedValue = nil } }
+        )
+
+        self.init(destination: destination(value), isActive: isActive, label: EmptyView.init)
     }
 }
 

@@ -28,15 +28,33 @@ struct RichTextView: View {
     var body: some View {
         contents
             .onAppear { viewModel.prepare(searchContext) }
-            .navigationBarItems(trailing: navigationBarTrailingItems)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    navigationBarTrailingItems
+                }
+            }
             .sheet(item: $shareItems, content: ShareView.init)
             .sheet(isPresented: $isWebViewOpen) {
                 NavigationView {
                     WebView(data: viewModel.textStorage.string.data(using: .utf8) ?? Data(), contentType: "application/html")
                         .inlineNavigationTitle("Browser Preview")
-                        .navigationBarItems(trailing: Button(action: {
-                            isWebViewOpen = false
-                        }) { Image(systemName: "xmark") })
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                if #available(iOS 15.0, *) {
+                                    Menu {
+
+                                    } label: {
+                                        Image(systemName: "xmark")
+                                    } primaryAction: {
+                                        isWebViewOpen = false
+                                    }
+                                } else {
+                                    Button(action: {
+                                        isWebViewOpen = false
+                                    }) { Image(systemName: "xmark") }
+                                }
+                            }
+                        }
                 }
             }
     }
