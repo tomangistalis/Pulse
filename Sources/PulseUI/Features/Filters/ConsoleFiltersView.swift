@@ -74,19 +74,18 @@ struct ConsoleFiltersView: View {
 
     @ViewBuilder
     private var buttonReset: some View {
-        if #available(iOS 15.0, *) {
-            Menu {
+        Menu {
 
-            } label: {
+        } label: {
+            Button(role: .destructive, action: {
+
+            }, label: {
                 Text("Reset")
-            } primaryAction: {
-                viewModel.resetAll()
-            }
-            .disabled(viewModel.isDefaultFilters(for: environment.mode))
-        } else {
-            Button.destructive(action: viewModel.resetAll) { Text("Reset") }
-                .disabled(viewModel.isDefaultFilters(for: environment.mode))
+            })
+        } primaryAction: {
+            viewModel.resetAll()
         }
+        .disabled(viewModel.isDefaultFilters(for: environment.mode))
     }
 }
 
