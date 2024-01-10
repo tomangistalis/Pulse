@@ -218,6 +218,26 @@ struct URLSessionMock: Hashable, Codable {
     let mockID: UUID
     var pattern: String
     var method: String?
+    var skip: Int?
+    var count: Int?
+
+    func isMatch(_ request: URLRequest) -> Bool {
+        if let lhs = request.httpMethod, let rhs = method,
+           lhs.uppercased() != rhs.uppercased() {
+            return false
+        }
+        guard let url = request.url?.absoluteString else {
+            return false
+        }
+        return isMatch(url)
+    }
+
+    func isMatch(_ url: String) -> Bool {
+        guard let regex = try? Regex(pattern, [.caseInsensitive]) else {
+            return false
+        }
+        return regex.isMatch(url)
+    }
 }
 
 struct URLSessionMockedResponse: Codable {

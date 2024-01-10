@@ -62,6 +62,7 @@ extension LoggerStore {
             Attribute(name: "requestBodySize", type: .integer64AttributeType),
             Attribute(name: "responseBodySize", type: .integer64AttributeType),
             Attribute(name: "isFromCache", type: .booleanAttributeType),
+            Attribute(name: "isMocked", type: .booleanAttributeType),
             Attribute(name: "rawMetadata", type: .stringAttributeType),
             Relationship(name: "originalRequest", type: .oneToOne(), entity: request),
             Relationship(name: "currentRequest", type: .oneToOne(isOptional: true), entity: request),
@@ -137,7 +138,7 @@ extension LoggerStore {
             Attribute(name: "key", type: .binaryDataAttributeType),
             Attribute(name: "size", type: .integer32AttributeType),
             Attribute(name: "decompressedSize", type: .integer32AttributeType),
-            Attribute(name: "linkCount", type: .integer16AttributeType),
+            Attribute(name: "linkCount", type: .integer32AttributeType),
             Attribute(name: "rawContentType", type: .stringAttributeType),
             Attribute(name: "inlineData", type: .binaryDataAttributeType),
             Attribute(name: "isUncompressed", type: .booleanAttributeType)

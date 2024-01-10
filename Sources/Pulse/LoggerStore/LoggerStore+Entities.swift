@@ -52,6 +52,8 @@ public final class NetworkTaskEntity: NSManagedObject {
     @NSManaged public var responseContentType: String?
     /// Returns `true` if the response was returned from the local cache.
     @NSManaged public var isFromCache: Bool
+    /// Returns `true` if the request is mocked
+    @NSManaged public var isMocked: Bool
 
     // MARK: Error
 
@@ -287,7 +289,7 @@ public final class LoggerBlobHandleEntity: NSManagedObject {
     }
 
     /// A number of requests referencing it.
-    @NSManaged var linkCount: Int16
+    @NSManaged var linkCount: Int32
 
     /// The logger inlines small blobs in a separate table in the database which
     /// significantly [reduces](https://www.sqlite.org/intern-v-extern-blob.html)

@@ -82,11 +82,11 @@ public struct ConsoleView: View {
                 environment.router.isShowingFilters = true
             }
         } else {
-            Button(action: { environment.router.isShowingShareStore = true }) {
-                Label("Share", systemImage: "square.and.arrow.up")
-            }
-            Button(action: { environment.router.isShowingFilters = true }) {
-                Image(systemName: "line.horizontal.3.decrease.circle")
+        Button(action: { environment.router.isShowingShareStore = true }) {
+            Image(systemName: "square.and.arrow.up")
+        }
+        Button(action: { environment.router.isShowingFilters = true }) {
+            Image(systemName: "line.horizontal.3.decrease.circle")
             }
         }
         ConsoleContextMenu()

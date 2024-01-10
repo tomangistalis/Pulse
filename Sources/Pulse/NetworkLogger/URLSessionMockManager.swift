@@ -13,7 +13,7 @@ final class URLSessionMockManager {
 
     func getMock(for request: URLRequest) -> URLSessionMock? {
         mocks.lazy.map(\.value).first {
-            $0.isMatch(for: request)
+            $0.isMatch(request)
         }
     }
 
@@ -27,12 +27,17 @@ final class URLSessionMockManager {
 
 final class URLSessionMockingProtocol: URLProtocol {
     override func startLoading() {
+        lock.lock()
+        defer { lock.unlock() }
+
         guard let mock = URLSessionMockManager.shared.getMock(for: request) else {
             client?.urlProtocol(self, didFailWithError: URLError(.unknown)) // Should never happen
             return
         }
-        RemoteLogger.shared.getMockedResponse(for: mock) { [weak self] in
-            self?.didReceiveResponse($0)
+        DispatchQueue.main.async {
+            RemoteLogger.shared.getMockedResponse(for: mock) { [weak self] in
+                self?.didReceiveResponse($0)
+            }
         }
     }
 
@@ -59,23 +64,33 @@ final class URLSessionMockingProtocol: URLProtocol {
     override func stopLoading() {}
 
     override class func canonicalRequest(for request: URLRequest) -> URLRequest {
-        request
+        var request = request
+        request.addValue("true", forHTTPHeaderField: URLSessionMockingProtocol.requestMockedHeaderName)
+        return request
     }
 
     override class func canInit(with request: URLRequest) -> Bool {
-        URLSessionMockManager.shared.getMock(for: request) != nil && RemoteLogger.shared.connectionState == .connected
+        lock.lock()
+        defer { lock.unlock() }
+
+        guard let mock = URLSessionMockManager.shared.getMock(for: request) else {
+            return false
+        }
+        defer { numberOfHandledRequests[mock.mockID, default: 0] += 1 }
+        let count = numberOfHandledRequests[mock.mockID, default: 0]
+        if count < (mock.skip ?? 0) {
+            return false // Skip the first N requests
+        }
+        if let maxCount = mock.count, count - (mock.skip ?? 0) >= maxCount {
+            return false // Mock for N number of times
+        }
+        return RemoteLogger.shared.connectionState == .connected
     }
+
+    static let requestMockedHeaderName = "X-PulseRequestMocked"
 }
 
-extension URLSessionMock {
-    func isMatch(for request: URLRequest) -> Bool {
-        guard request.httpMethod?.uppercased() == method ?? "GET" else {
-            return false
-        }
-        guard let url = request.url?.absoluteString,
-              let regex = try? Regex(pattern, [.caseInsensitive]) else {
-            return false
-        }
-        return regex.isMatch(url)
-    }
-}
+// Number of handled requests per mock.
+private var numberOfHandledRequests: [UUID: Int] = [:]
+private var mockedTaskIDs: Set<Int> = []
+private let lock = NSLock()

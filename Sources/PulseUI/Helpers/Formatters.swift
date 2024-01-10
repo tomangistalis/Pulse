@@ -67,11 +67,11 @@ enum ConsoleFormatter {
         return label.capitalized
     }
 
-    static func subheadline(for task: NetworkTaskEntity, hasTime: Bool = true) -> String {
+    static func subheadline(for task: NetworkTaskEntity, hasTime: Bool = true, store: LoggerStore) -> String {
         return [
             hasTime ? time(for: task.createdAt) : nil,
             task.httpMethod ?? "GET",
-            status(for: task),
+            status(for: task, store: store),
             transferSize(for: task),
             duration(for: task)
         ].compactMap { $0 }.joined(separator: separator)
@@ -99,8 +99,11 @@ enum ConsoleFormatter {
         }
     }
 
-    static func status(for task: NetworkTaskEntity) -> String {
-        switch task.state {
+    static func status(for task: NetworkTaskEntity, store: LoggerStore) -> String {
+        guard let state = task.state(in: store) else {
+            return "Unknown"
+        }
+        switch state {
         case .pending:
             return ProgressViewModel.title(for: task)
         case .success:
@@ -148,6 +151,9 @@ enum StatusCodeFormatter {
         switch statusCode {
         case 0: return "Success"
         case 200: return "200 OK"
+        case 418: return "418 Teapot"
+        case 429: return "429 Too many requests"
+        case 451: return "451 Unavailable for Legal Reasons"
         default: return "\(statusCode) \( HTTPURLResponse.localizedString(forStatusCode: statusCode).capitalized)"
         }
     }

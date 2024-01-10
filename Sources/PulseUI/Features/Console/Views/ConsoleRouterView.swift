@@ -15,7 +15,6 @@ final class ConsoleRouter: ObservableObject {
     @Published var isShowingFilters = false
     @Published var isShowingSettings = false
     @Published var isShowingSessions = false
-    @Published var isShowingStoreInfo = false
     @Published var isShowingShareStore = false
 }
 
@@ -45,7 +44,6 @@ extension ConsoleRouterView {
             .sheet(isPresented: $router.isShowingFilters) { destinationFilters }
             .sheet(isPresented: $router.isShowingSettings) { destinationSettings }
             .sheet(isPresented: $router.isShowingSessions) { destinationSessions }
-            .sheet(isPresented: $router.isShowingStoreInfo) { destinationStoreInfo }
             .sheet(isPresented: $router.isShowingShareStore) { destinationShareStore }
             .sheet(item: $router.shareItems, content: ShareView.init)
     }
@@ -166,7 +164,11 @@ extension ConsoleRouterView {
                     SettingsView(store: environment.store)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Close") { router.isShowingSettings = false }
+                                Button(action: {
+                                    router.isShowingSettings = false
+                                }, label: {
+                                    Image(systemName: "xmark")
+                                })
                             }
                         }
                 }
@@ -176,7 +178,11 @@ extension ConsoleRouterView {
                     ConsoleFiltersView()
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
-                                Button("Close") { router.isShowingFilters = false }
+                                Button(action: {
+                                    router.isShowingFilters = false
+                                }, label: {
+                                    Image(systemName: "xmark")
+                                })
                             }
                         }
                 }
