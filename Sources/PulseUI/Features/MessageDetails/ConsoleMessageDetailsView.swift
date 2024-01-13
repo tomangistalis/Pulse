@@ -13,7 +13,7 @@ struct ConsoleMessageDetailsView: View {
 
     @State private var showingMetadata: Bool?
 
-#if os(iOS)
+#if os(iOS) || os(visionOS)
     var body: some View {
         contents
             .navigationBarTitle("", displayMode: .inline)

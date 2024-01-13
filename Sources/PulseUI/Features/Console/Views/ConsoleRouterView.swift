@@ -36,7 +36,7 @@ struct ConsoleRouterView: View {
     }
 }
 
-#if os(iOS)
+#if os(iOS) || os(visionOS)
 @available(iOS 15, *)
 extension ConsoleRouterView {
     var contents: some View {
@@ -116,29 +116,6 @@ extension ConsoleRouterView {
                             }
                         } else {
                             Button(action: { router.isShowingSettings = false }) {
-                                Text("Done")
-                            }
-                        }
-                    }
-                }
-        }
-    }
-
-    private var destinationStoreInfo: some View {
-        NavigationView {
-            StoreDetailsView(source: .store(environment.store))
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        if #available(iOS 15.0, *) {
-                            Menu {
-
-                            } label: {
-                                Text("Done")
-                            } primaryAction: {
-                                router.isShowingStoreInfo = false
-                            }
-                        } else {
-                            Button(action: { router.isShowingStoreInfo = false }) {
                                 Text("Done")
                             }
                         }

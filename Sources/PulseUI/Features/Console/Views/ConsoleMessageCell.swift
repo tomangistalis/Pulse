@@ -38,7 +38,7 @@ struct ConsoleMessageCell: View {
         HStack {
             Text(title)
                 .lineLimit(1)
-#if os(iOS)
+#if os(iOS) || os(visionOS)
                 .font(ConsoleConstants.fontInfo.weight(.medium))
 #else
                 .font(ConsoleConstants.fontTitle.weight(.medium))
